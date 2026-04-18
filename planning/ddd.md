@@ -210,20 +210,20 @@ library-catalog/
 ├─ src/
 │  ├─ domain/
 │  │  ├─ model/
-│  │  │  ├─ Book.java
-│  │  │  ├─ Title.java
-│  │  │  ├─ Author.java
-│  │  │  ├─ Category.java
-│  │  │  ├─ ISBN.java
-│  │  │  └─ BookStatus.java
+│  │  │  ├─ Book
+│  │  │  ├─ Title
+│  │  │  ├─ Author
+│  │  │  ├─ Category
+│  │  │  ├─ ISBN
+│  │  │  └─ BookStatus
 │  │  ├─ search/
-│  │  │  ├─ SearchCriteria.java
-│  │  │  ├─ SearchResult.java
-│  │  │  └─ CatalogSearchService.java
+│  │  │  ├─ SearchCriteria
+│  │  │  ├─ SearchResult
+│  │  │  └─ CatalogSearchService
 │  │  └─ repository/
-│  │     └─ BookRepository.java
+│  │     └─ BookRepository
 │  └─ application/
-│     └─ SearchBooksUseCase.java
+│     └─ SearchBooksUseCase
 └─ README.md
 ```
 
