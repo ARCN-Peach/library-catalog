@@ -1,0 +1,96 @@
+Aquí tienes una lista organizada por dominio, todos aplicables al sistema de biblioteca:
+📤 Productores → 📨 Cola RabbitMQ → 📥 Consumidores
+1. Préstamo de libro
+rental-service (Productor)
+  └── publica: BookLentEvent { bookId, userId, dueDate }
+        │
+        ├── catalog-service (Consumidor)
+        │     └── actualiza stock del libro (disponible → prestado)
+        │
+        └── notification-service (Consumidor)
+              └── envía email de confirmación al usuario
+2. Devolución de libro
+rental-service (Productor)
+  └── publica: BookReturnedEvent { bookId, userId, returnDate }
+        │
+        ├── catalog-service (Consumidor)
+        │     └── actualiza stock (prestado → disponible)
+        │
+        ├── reservation-service (Consumidor)
+        │     └── activa la próxima reserva pendiente del libro
+        │
+        └── fine-service (Consumidor)
+              └── evalúa si la devolución fue tardía y genera multa
+3. Reserva activada
+reservation-service (Productor)
+  └── publica: ReservationActivatedEvent { reservationId, bookId, userId }
+        │
+        └── notification-service (Consumidor)
+              └── notifica al usuario que su libro está disponible
+4. Multa generada
+fine-service (Productor)
+  └── publica: FineGeneratedEvent { fineId, userId, amount }
+        │
+        ├── user-service (Consumidor)
+        │     └── bloquea nuevos préstamos al usuario
+        │
+        └── notification-service (Consumidor)
+              └── envía email con detalle de la multa
+5. Multa pagada
+fine-service (Productor)
+  └── publica: FinePaidEvent { fineId, userId }
+        │
+        └── user-service (Consumidor)
+              └── desbloquea al usuario si no tiene multas pendientes
+6. Registro de usuario
+user-service (Productor)
+  └── publica: UserRegisteredEvent { userId, email, name }
+        │
+        └── notification-service (Consumidor)
+              └── envía email de bienvenida
+7. Usuario bloqueado
+user-service (Productor)
+  └── publica: UserBlockedEvent { userId, reason }
+        │
+        ├── rental-service (Consumidor)
+        │     └── cancela préstamos activos pendientes
+        │
+        └── reservation-service (Consumidor)
+              └── cancela reservas activas del usuario
+8. Libro registrado en catálogo
+catalog-service (Productor)
+  └── publica: BookRegisteredEvent { bookId, title, category }
+        │
+        └── search-service (Consumidor)             ← si tienes índice de búsqueda separado
+              └── indexa el libro en Elasticsearch / Meilisearch
+9. Libro retirado del catálogo
+catalog-service (Productor)
+  └── publica: BookRetiredEvent { bookId }
+        │
+        ├── reservation-service (Consumidor)
+        │     └── cancela todas las reservas pendientes del libro
+        │
+        └── search-service (Consumidor)
+              └── elimina el libro del índice de búsqueda
+10. Vencimiento de préstamo (job programado)
+rental-service (Productor — @Scheduled, corre cada noche)
+  └── publica: RentalOverdueEvent { rentalId, bookId, userId, daysOverdue }
+        │
+        ├── fine-service (Consumidor)
+        │     └── genera la multa proporcional a los días de retraso
+        │
+        └── notification-service (Consumidor)
+              └── envía recordatorio de devolución urgente
+Mapa completo de servicios
+                    ┌─────────────────────────────────┐
+                    │         RabbitMQ Exchanges       │
+                    │  book.*  │ rental.* │  user.*    │
+                    └──────────┬──────────┬────────────┘
+                               │          │
+        ┌──────────────────────┼──────────┼───────────────────┐
+        │                      │          │                   │
+   catalog-service        rental-service  user-service   fine-service
+   (P y C)                (P y C)         (P y C)        (P y C)
+        │                      │
+   reservation-service   notification-service
+   (P y C)               (solo C — nunca produce)
