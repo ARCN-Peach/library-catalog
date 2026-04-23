@@ -10,13 +10,21 @@ import java.util.UUID;
 
 public interface BookJpaRepository extends JpaRepository<BookJpaEntity, UUID> {
 
-    @Query("""
-            SELECT b FROM BookJpaEntity b
-            WHERE (:title IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%')))
-            AND (:author IS NULL OR LOWER(CONCAT(b.authorFirstName, ' ', b.authorLastName)) LIKE LOWER(CONCAT('%', :author, '%')))
-            AND (:category IS NULL OR b.category = :category)
-            AND b.status = 'PUBLISHED'
-            """)
+    @Query(value = """
+            SELECT * FROM books
+            WHERE (CAST(:title AS TEXT) IS NULL OR LOWER(title) LIKE LOWER('%' || CAST(:title AS TEXT) || '%'))
+            AND   (CAST(:author AS TEXT) IS NULL OR LOWER(author_first_name || ' ' || author_last_name) LIKE LOWER('%' || CAST(:author AS TEXT) || '%'))
+            AND   (CAST(:category AS TEXT) IS NULL OR category = CAST(:category AS TEXT))
+            AND   status = 'PUBLISHED'
+            """,
+            countQuery = """
+            SELECT COUNT(*) FROM books
+            WHERE (CAST(:title AS TEXT) IS NULL OR LOWER(title) LIKE LOWER('%' || CAST(:title AS TEXT) || '%'))
+            AND   (CAST(:author AS TEXT) IS NULL OR LOWER(author_first_name || ' ' || author_last_name) LIKE LOWER('%' || CAST(:author AS TEXT) || '%'))
+            AND   (CAST(:category AS TEXT) IS NULL OR category = CAST(:category AS TEXT))
+            AND   status = 'PUBLISHED'
+            """,
+            nativeQuery = true)
     Page<BookJpaEntity> search(
             @Param("title") String title,
             @Param("author") String author,

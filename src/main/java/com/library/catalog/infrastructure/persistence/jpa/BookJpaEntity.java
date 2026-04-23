@@ -35,7 +35,7 @@ public class BookJpaEntity {
     @Column(name = "available_stock", nullable = false)
     private int availableStock;
 
-    protected BookJpaEntity() {
+    public BookJpaEntity() {
     }
 
     public UUID getId() { return id; }
