@@ -134,6 +134,23 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
+                <configuration>
+                    <excludes>
+                        <!-- main class: solo llama a SpringApplication.run -->
+                        <exclude>com/library/catalog/LibraryCatalogApplication.class</exclude>
+                        <!-- Spring @Configuration: beans declarativos sin lógica -->
+                        <exclude>com/library/catalog/infrastructure/config/**</exclude>
+                        <!-- Entidades JPA: solo getters/setters -->
+                        <exclude>com/library/catalog/infrastructure/persistence/jpa/BookJpaEntity.class</exclude>
+                        <exclude>com/library/catalog/infrastructure/persistence/outbox/OutboxEventEntity.class</exclude>
+                        <!-- Interfaces JPA: sin implementación propia -->
+                        <exclude>com/library/catalog/infrastructure/persistence/jpa/BookJpaRepository.class</exclude>
+                        <exclude>com/library/catalog/infrastructure/persistence/outbox/OutboxJpaRepository.class</exclude>
+                        <!-- DTOs de mensajería: solo records de datos -->
+                        <exclude>com/library/catalog/infrastructure/messaging/consumer/BookLentMessage.class</exclude>
+                        <exclude>com/library/catalog/infrastructure/messaging/consumer/BookReturnedMessage.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
