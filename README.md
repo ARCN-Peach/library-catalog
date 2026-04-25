@@ -1,5 +1,7 @@
 # library-catalog
 
+[![SonarQube](https://github.com/ARCN-Peach/library-catalog/actions/workflows/ci.yml/badge.svg)](https://github.com/ARCN-Peach/library-catalog/actions/workflows/ci.yml)
+
 Microservicio responsable del bounded context **Gestión de Catálogo** dentro del sistema de biblioteca digital.
 
 Gestiona el ciclo de vida de los libros: registro, actualización, retiro y búsqueda. Es el único dueño del stock disponible de cada libro y reacciona a eventos de otros servicios para mantenerlo consistente.
