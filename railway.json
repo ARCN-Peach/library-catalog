@@ -1,0 +1,25 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "buildCommand": "mvn clean package -DskipTests -B"
+  },
+  "deploy": {
+    "startCommand": "java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -jar app.jar",
+    "restartPolicyMaxRetries": 3,
+    "restartPolicyWindowSeconds": 60,
+    "numReplicas": 1,
+    "healthcheckPath": "/actuator/health/liveness",
+    "healthcheckTimeout": 30,
+    "sleepApplication": false
+  },
+  "variables": {
+    "DB_URL": "jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/railway",
+    "DB_USER": "${{Postgres.PGUSER}}",
+    "DB_PASSWORD": "${{Postgres.PGPASSWORD}}",
+    "RABBITMQ_HOST": "${{RabbitMQ.RABBITMQ_HOST}}",
+    "RABBITMQ_PORT": "${{RabbitMQ.RABBITMQ_PORT}}",
+    "RABBITMQ_USER": "${{RabbitMQ.RABBITMQ_DEFAULT_USER}}",
+    "RABBITMQ_PASSWORD": "${{RabbitMQ.RABBITMQ_DEFAULT_PASS}}"
+  }
+}
