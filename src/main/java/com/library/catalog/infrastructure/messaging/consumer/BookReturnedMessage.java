@@ -3,12 +3,9 @@ package com.library.catalog.infrastructure.messaging.consumer;
 import java.time.Instant;
 import java.util.UUID;
 
-public record BookReturnedMessage(
-        UUID eventId,
-        UUID bookId,
-        UUID userId,
-        Instant returnDate,
-        Instant occurredAt,
-        String correlationId
-) {
+// Matches the DomainEventMessage envelope that library-rental publishes:
+// { "type": "...", "occurredAt": "...", "payload": { "rentalId", "userId", "bookId", "returnedAt" } }
+public record BookReturnedMessage(String type, Instant occurredAt, Payload payload) {
+
+    public record Payload(UUID rentalId, UUID userId, UUID bookId, Instant returnedAt) {}
 }

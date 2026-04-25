@@ -23,6 +23,7 @@
         <archunit.version>1.3.0</archunit.version>
         <testcontainers.version>1.20.3</testcontainers.version>
         <springdoc.version>2.6.0</springdoc.version>
+        <sonar.organization>arcn-peach</sonar.organization>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.language>java</sonar.language>

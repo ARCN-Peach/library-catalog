@@ -20,25 +20,27 @@ public class RentalEventConsumer {
 
     @RabbitListener(queues = "catalog.rental.book-lent")
     public void onBookLent(BookLentMessage message) {
-        log.info("BookLentEvent received for book {} [correlationId={}]",
-                message.bookId(), message.correlationId());
+        log.info("BookLentEvent received for book {} [rentalId={}]",
+                message.payload().bookId(), message.payload().rentalId());
         try {
-            updateBookStockUseCase.decrementStock(message.bookId(), message.correlationId());
+            updateBookStockUseCase.decrementStock(message.payload().bookId(),
+                    message.payload().rentalId().toString());
         } catch (BookNotFoundException e) {
-            log.error("Book not found when processing BookLentEvent [bookId={}, correlationId={}]",
-                    message.bookId(), message.correlationId());
+            log.error("Book not found when processing BookLentEvent [bookId={}]",
+                    message.payload().bookId());
         }
     }
 
     @RabbitListener(queues = "catalog.rental.book-returned")
     public void onBookReturned(BookReturnedMessage message) {
-        log.info("BookReturnedEvent received for book {} [correlationId={}]",
-                message.bookId(), message.correlationId());
+        log.info("BookReturnedEvent received for book {} [rentalId={}]",
+                message.payload().bookId(), message.payload().rentalId());
         try {
-            updateBookStockUseCase.incrementStock(message.bookId(), message.correlationId());
+            updateBookStockUseCase.incrementStock(message.payload().bookId(),
+                    message.payload().rentalId().toString());
         } catch (BookNotFoundException e) {
-            log.error("Book not found when processing BookReturnedEvent [bookId={}, correlationId={}]",
-                    message.bookId(), message.correlationId());
+            log.error("Book not found when processing BookReturnedEvent [bookId={}]",
+                    message.payload().bookId());
         }
     }
 }

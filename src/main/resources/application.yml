@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: ${PORT:8082}
 
 spring:
   application:
@@ -30,7 +30,7 @@ spring:
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USER:guest}
     password: ${RABBITMQ_PASSWORD:guest}
-    virtual-host: /
+    virtual-host: ${RABBITMQ_VIRTUAL_HOST:/}
 
   jackson:
     serialization:
